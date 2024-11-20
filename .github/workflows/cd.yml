@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DOCKER_TAG_SUFFIX: willbrid
+      DOCKER_TAG_SUFFIX: latest
       
     steps:
     - name: Checkout
@@ -55,6 +55,6 @@ jobs:
       with:
         context: .
         push: true
-        tags: imzerofiltre/zerofiltretech-blog-front:7_${{ env.DOCKER_TAG_SUFFIX }}
+        tags: nedimitri/zerofiltretech-blog-front:${{ github.run_number }}_${{ env.DOCKER_TAG_SUFFIX }}
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache-new
