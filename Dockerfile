@@ -31,5 +31,9 @@ COPY --from=build /app/dist ./dist
 COPY --from=deps /app/node_modules ./node_modules
 
 ENV NODE_ENV="production"
+ENV OTEL_TRACES_EXPORTER="otlp"
+ENV OTEL_EXPORTER_OTLP_ENDPOINT="http://otelcol-opentelemetry-collector.zerofiltre-bootcamp.svc:4318"
+ENV OTEL_NODE_RESOURCE_DETECTORS="env,host,os"
+ENV OTEL_SERVICE_NAME="zerofiltre-blog-frontend-nedimitri"
 
 ENTRYPOINT ["sh", "-c", "node --require @opentelemetry/auto-instrumentations-node/register dist/zerofiltre-blog/server/main.js"]

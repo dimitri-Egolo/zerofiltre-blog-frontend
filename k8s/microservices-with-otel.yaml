@@ -2,20 +2,20 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: <your_namespace>
-  name: zerofiltre-blog-frontend-<your_namespace>
+  namespace: nedimitri
+  name: zerofiltre-blog-frontend-nedimitri
 data:
-  API_BASE_URL: https://<your_namespace>.blog-api.zerofiltre.tech
-  BLOG_URL: https://<your_namespace>-blog.zerofiltre.tech
-  COURSES_URL: https://<your_namespace>.blog-api.zerofiltre.tech/cours
+  API_BASE_URL: https://nedimitri.blog-api.zerofiltre.tech
+  BLOG_URL: https://nedimitri-blog.zerofiltre.tech
+  COURSES_URL: https://nedimitri.blog-api.zerofiltre.tech/cours
   GITHUB_CLIENT_ID: xxxxxxx
-  GITHUB_REDIRECT_URL: https://<your_namespace>.blog-api.zerofiltre.tech/user/social-auth
+  GITHUB_REDIRECT_URL: https://nedimitri.blog-api.zerofiltre.tech/user/social-auth
   OVH_AUTH_NAME: xxxxxxx
   OVH_AUTH_URL: https://auth.cloud.ovh.net/v3/auth/tokens?nocatalog
   OVH_SERVER_URL: https://storage.gra.cloud.ovh.net/v1/xxxxxxx/zerofiltre-object-container
   SERVICES_URL: https://dev.services.zerofiltre.tech
   STACK_OVERFLOW_CLIENT_ID: '22742'
-  STACK_OVERFLOW_REDIRECT_URL: https://<your_namespace>.blog-api.zerofiltre.tech/user/social-auth
+  STACK_OVERFLOW_REDIRECT_URL: https://nedimitri.blog-api.zerofiltre.tech/user/social-auth
   COURSE_ROUTES_ACTIVE: 'true'
   SCHOOL_API_BASE: http://localhost:3000
   BANNER_VISIBLE: 'false'
@@ -24,16 +24,16 @@ data:
   BANNER_TEXT: 'Désormais, vous pouvez payer votre abonnement PRO par Mobile Money et Paypal!'
   BANNER_BACKGROUND_COLOR: '#052b5d'
   #define otel env variables here
-  #  OTEL_TRACES_EXPORTER: ...
-  #  OTEL_EXPORTER_OTLP_ENDPOINT: "http://..."
+  OTEL_TRACES_EXPORTER: "otlp"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcol-opentelemetry-collector.zerofiltre-bootcamp.svc:4318"
   OTEL_NODE_RESOURCE_DETECTORS: "env,host,os"
-#  OTEL_SERVICE_NAME: "zerofiltre-blog-frontend-<your_namespace>"
+  OTEL_SERVICE_NAME: "zerofiltre-blog-frontend-nedimitri"
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  namespace: <your_namespace>
-  name: zerofiltre-blog-frontend-<your_namespace>
+  namespace: nedimitri
+  name: zerofiltre-blog-frontend-nedimitri
 type: Opaque
 data:
   OVH_AUTH_PASSWORD: eHh4eHh4eA==
@@ -41,33 +41,33 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: <your_namespace>
-  name: zerofiltre-blog-frontend-<your_namespace>
+  namespace: nedimitri
+  name: zerofiltre-blog-frontend-nedimitri
 spec:
   minReadySeconds: 30
   progressDeadlineSeconds: 120
   replicas: 1
   selector:
     matchLabels:
-      app: zerofiltre-blog-frontend-<your_namespace>
+      app: zerofiltre-blog-frontend-nedimitri
   template:
     metadata:
       labels:
-        app: zerofiltre-blog-frontend-<your_namespace>
+        app: zerofiltre-blog-frontend-nedimitri
     spec:
       containers:
-        - name: zerofiltre-blog-frontend-<your_namespace>
-          image: imzerofiltre/zerofiltretech-blog-front:7_<your_namespace>
-          imagePullPolicy: IfNotPresent
+        - name: zerofiltre-blog-frontend-nedimitri
+          image: nedimitri/zerofiltretech-blog-front:1_latest
+          imagePullPolicy: Always
           ports:
             - name: http-port
               containerPort: 4000
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: zerofiltre-blog-frontend-<your_namespace>
+                name: zerofiltre-blog-frontend-nedimitri
             - secretRef:
-                name: zerofiltre-blog-frontend-<your_namespace>
+                name: zerofiltre-blog-frontend-nedimitri
           resources:
             requests:
               cpu: 0.1
@@ -85,37 +85,37 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: <your_namespace>
-  name: zerofiltre-blog-frontend-<your_namespace>
+  namespace: nedimitri
+  name: zerofiltre-blog-frontend-nedimitri
 spec:
   ports:
     - protocol: TCP
       port: 80
       targetPort: http-port
   selector:
-    app: zerofiltre-blog-frontend-<your_namespace>
+    app: zerofiltre-blog-frontend-nedimitri
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: <your_namespace>
-  name: zerofiltre-blog-frontend-<your_namespace>
+  namespace: nedimitri
+  name: zerofiltre-blog-frontend-nedimitri
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-    - host: <your_namespace>-blog.zerofiltre.tech
+    - host: nedimitri-blog.zerofiltre.tech
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: zerofiltre-blog-frontend-<your_namespace>
+                name: zerofiltre-blog-frontend-nedimitri
                 port:
                   number: 80
   tls:
     - hosts:
-        - <your_namespace>-blog.zerofiltre.tech
-      secretName: zerofiltre-blog-frontend-<your_namespace>-cert
+        - nedimitri-blog.zerofiltre.tech
+      secretName: zerofiltre-blog-frontend-nedimitri-cert
